@@ -1,10 +1,13 @@
+
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next') || '/';
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -25,7 +28,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push('/');
+        router.push(next);
         router.refresh();
       } else {
         setError(data.error || 'Login failed');
@@ -57,8 +60,21 @@ export default function LoginPage() {
               {submitting ? 'Logging in...' : 'Login'}
             </button>
           </form>
+
+          <p style={{ marginTop: '15px' }}>
+            Don&apos;t have an account?{' '}
+            <a href={`/register?next=${encodeURIComponent(next)}`}>Register here</a>
+          </p>
         </div>
       </section>
     </>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+    }
