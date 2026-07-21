@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { getAdminSession } from '@/lib/session';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import AdminSidebar from '@/components/AdminSidebar';
+import Link from 'next/link';
 
 export const metadata = { title: 'Admin Dashboard | Shakti Events' };
 
@@ -40,10 +41,10 @@ export default async function AdminDashboardPage() {
             <p>{pending_bookings ?? 0}</p>
           </div>
 
-          <div className="admin-card">
+          <Link href="/admin/messages" className="admin-card" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
             <h3>Messages</h3>
             <p>{total_messages ?? 0}</p>
-          </div>
+          </Link>
         </div>
       </div>
     </div>
