@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next') || '/';
   const [status, setStatus] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -32,7 +34,7 @@ export default function RegisterPage() {
 
       if (res.ok) {
         setStatus({ type: 'success', message: 'Registration Successful. Redirecting to login...' });
-        setTimeout(() => router.push('/login'), 1200);
+        setTimeout(() => router.push(`/login?next=${encodeURIComponent(next)}`), 1200);
       } else {
         setStatus({ type: 'error', message: data.error || 'Something went wrong' });
       }
@@ -72,8 +74,21 @@ export default function RegisterPage() {
               {submitting ? 'Please wait...' : 'Register'}
             </button>
           </form>
+
+          <p style={{ marginTop: '15px' }}>
+            Already have an account?{' '}
+            <a href={`/login?next=${encodeURIComponent(next)}`}>Login here</a>
+          </p>
         </div>
       </section>
     </>
   );
 }
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
+  );
+      }
